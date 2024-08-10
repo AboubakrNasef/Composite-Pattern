@@ -1,10 +1,10 @@
 ﻿namespace CompositeFileSystem.Composite
 {
-    public class Folder : DirectoryElement
+    public class DirectoryFolder : DirectoryElement
     {
-        public Folder(string name) : base(name)
+        public DirectoryFolder(string name) : base(name)
         {
-            _childrens = new List<DirectoryElement>();
+            
         }
 
         public override ElementType Type => ElementType.Folder;
@@ -20,12 +20,7 @@
         public override DirectoryElement this[int index] => _childrens![index];
         protected override double GetSize()
         {
-            var size = 0.0;
-            foreach (var item in _childrens!)
-            {
-                size += item.Size;
-            }
-            return size;
+           return _childrens.Select(s => s.Size).Sum();
         }
     }
 }
