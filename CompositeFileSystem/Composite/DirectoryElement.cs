@@ -9,18 +9,19 @@ namespace CompositeFileSystem.Composite
 {
     public abstract class DirectoryElement
     {
-        protected IList<DirectoryElement> _childrens;
-
-        public IReadOnlyList<DirectoryElement> Childrens => _childrens.AsReadOnly();
+        protected IList<DirectoryElement> _children;
+        public IReadOnlyList<DirectoryElement> Children => _children.AsReadOnly();
 
         public string Name { get; protected set; }
+        public string Path { get; protected set; }
         public virtual double Size => Math.Round(GetSize(), 2);
         public abstract ElementType Type { get; }
 
-        protected DirectoryElement(string name)
+        protected DirectoryElement(string name, string path)
         {
-            Name = name;
-            _childrens = new List<DirectoryElement>();
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Path = path ?? throw new ArgumentNullException(nameof(path));
+            _children = [];
         }
         public virtual void Add(DirectoryElement element)
         {
@@ -31,14 +32,6 @@ namespace CompositeFileSystem.Composite
             throw new NotImplementedException();
         }
 
-        public virtual DirectoryElement this[int index]
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         protected abstract double GetSize();
         public virtual void Rename(string newName)
         {
@@ -47,7 +40,7 @@ namespace CompositeFileSystem.Composite
 
         public override string ToString()
         {
-            return $"{Name} : {Size} MB";
+            return $"{Name} : {Size / 1000} KB";
 
         }
     }

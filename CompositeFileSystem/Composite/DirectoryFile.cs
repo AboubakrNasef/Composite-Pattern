@@ -6,19 +6,20 @@ using System.Threading.Tasks;
 
 namespace CompositeFileSystem.Composite
 {
-    public class DirectoryFile :DirectoryElement
+    public class DirectoryFile : DirectoryElement
     {
-        double _size = new Random().NextDouble() *100;
-        public DirectoryFile(string name) : base(name)
+        private readonly FileInfo _fileInfo;
+
+        public DirectoryFile(string name, string path) : base(name, path)
         {
+            _fileInfo = new FileInfo(path);
         }
 
         public override ElementType Type => ElementType.File;
 
         protected override double GetSize()
         {
-            // simulating that wwe actually get the size of the file 
-            return _size;
+            return _fileInfo.Length;
         }
     }
 }

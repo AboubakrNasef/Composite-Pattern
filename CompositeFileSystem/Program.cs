@@ -1,33 +1,64 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿
 using CompositeFileSystem.Composite;
-using Dumpify;
-using System;
+
+var folderPath = @"C:\_Aboubakr\TechTalk\DesignPatterns\D1\angular\factory\src";
+try
+{
+    if (!Directory.Exists(folderPath))
+    {
+        Console.WriteLine($"Directory does not exist: {folderPath}");
+        return;
+    }
+
+    var directoryStructure = CreateDirectoryStructure(folderPath);
+    var printer = new DirectoryPrinter();
+    directoryStructure.Accept(printer);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error: {ex.Message}");
+}
 
 
+DirectoryFolder CreateDirectoryStructure(string path)
+{
+    if (!Directory.Exists(path))
+    {
+        throw new DirectoryNotFoundException($"Directory not found: {path}");
+    }
 
-var parentFolder = new DirectoryFolder("ParentFolder");
-var folder1 = new DirectoryFolder("Folder1");
-var folder2 = new DirectoryFolder("Folder2");
-var file1 = new DirectoryFile("File1");
-var file2 = new DirectoryFile("File2");
-var folder3 = new DirectoryFolder("Folder3");
-var file4 = new DirectoryFile("File4");
-var file5 = new DirectoryFile("File5");
-var file6 = new DirectoryFile("File6");
-var file7 = new DirectoryFile("File7");
-var file8 = new DirectoryFile("File8");
+    string directoryName = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar));
+    if (string.IsNullOrEmpty(directoryName))
+    {
+        directoryName = path; // Use full path if we can't get the name (e.g., for root directories)
+    }
+    var rootFolder = new DirectoryFolder(directoryName, path);
 
-folder1.Add(file1);
-parentFolder.Add(folder1);
-parentFolder.Add(folder2);
-parentFolder.Add(file2);
-folder2.Add(file4);
-folder2.Add(folder3);
-folder3.Add(file6);
-folder3.Add(file7);
-folder3.Add(file8);
+    try
+    {
+        // Add files in current directory
+        var files = Directory.GetFiles(path);
+        foreach (var file in files)
+        {
+            string fileName = Path.GetFileName(file);
+            rootFolder.Add(new DirectoryFile(fileName, file));
+        }
 
-var printer = new DirectoryPrinter();
-parentFolder.Accept(printer);
-var posintion = Console.GetCursorPosition();
-Console.SetCursorPosition(posintion.Left,posintion.Top+10);
+        // Recursively add subdirectories
+        var directories = Directory.GetDirectories(path);
+        foreach (var dir in directories)
+        {
+            rootFolder.Add(CreateDirectoryStructure(dir));
+        }
+    }
+    catch (UnauthorizedAccessException ex)
+    {
+        Console.WriteLine($"Access denied to some files or directories: {ex.Message}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error accessing directory: {ex.Message}");
+    }
+
+    return rootFolder;
+}

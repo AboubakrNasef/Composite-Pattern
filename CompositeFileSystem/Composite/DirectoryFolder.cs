@@ -1,26 +1,30 @@
-﻿namespace CompositeFileSystem.Composite
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CompositeFileSystem.Composite
 {
     public class DirectoryFolder : DirectoryElement
     {
-        public DirectoryFolder(string name) : base(name)
+        public DirectoryFolder(string name, string path) : base(name, path)
         {
-            
         }
 
         public override ElementType Type => ElementType.Folder;
 
         public override void Add(DirectoryElement element)
         {
-            _childrens!.Add(element);
+            _children.Add(element);
         }
         public override bool Remove(DirectoryElement element)
         {
-           return  _childrens!.Remove(element);
+            return _children.Remove(element);
         }
-        public override DirectoryElement this[int index] => _childrens![index];
         protected override double GetSize()
         {
-           return _childrens.Select(s => s.Size).Sum();
+            return _children.Select(s => s.Size).Sum();
         }
     }
 }
