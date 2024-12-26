@@ -1,5 +1,9 @@
 ﻿
 using CompositeFileSystem.Composite;
+using System.IO;
+using System.Xml.Linq;
+using Zu.TypeScript.TsTypes;
+using Zu.TypeScript;
 
 var folderPath = @"C:\_Aboubakr\TechTalk\DesignPatterns\D1\angular\factory\src";
 try
@@ -44,7 +48,19 @@ DirectoryFolder CreateDirectoryStructure(string path)
         foreach (var file in files)
         {
             string fileName = Path.GetFileName(file);
-            rootFolder.Add(new DirectoryFile(fileName, file));
+            var directoryFile = new DirectoryFile(fileName, file);
+            rootFolder.Add(directoryFile);
+
+            if (Path.GetExtension(fileName) == ".ts")
+            {
+                var ast = new TypeScriptAST(File.ReadAllText(file), fileName);
+                var classes = ast.OfKind(SyntaxKind.ClassDeclaration);
+                foreach (var cl in classes)
+                {
+                    var fileClass = new DirectoryFileClass(cl.IdentifierStr,  file);
+                    directoryFile.Add(fileClass);
+                }
+            }
         }
 
         // Recursively add subdirectories

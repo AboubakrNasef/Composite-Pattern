@@ -4,6 +4,6 @@
     {
         File,
         Folder,
-        Class
+        FileClass
     }
 }

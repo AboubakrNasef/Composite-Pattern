@@ -12,7 +12,7 @@ namespace CompositeFileSystem.Composite
         {
         }
 
-        public override ElementType Type => ElementType.Class;
+        public override ElementType Type => ElementType.FileClass;
 
         protected override double GetSize()
         {

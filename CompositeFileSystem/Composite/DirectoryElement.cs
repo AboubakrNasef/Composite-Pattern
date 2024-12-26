@@ -23,6 +23,7 @@ namespace CompositeFileSystem.Composite
             this.Path = path ?? throw new ArgumentNullException(nameof(path));
             _children = [];
         }
+
         public virtual void Add(DirectoryElement element)
         {
             throw new NotImplementedException();
@@ -33,10 +34,6 @@ namespace CompositeFileSystem.Composite
         }
 
         protected abstract double GetSize();
-        public virtual void Rename(string newName)
-        {
-            Name = newName;
-        }
 
         public override string ToString()
         {

@@ -15,23 +15,23 @@ namespace CompositeFileSystem.Composite
         public DirectoryFile(string name, string path) : base(name, path)
         {
             _fileInfo = new FileInfo(path);
-            AddTsFunctions();
         }
 
-        private void AddTsFunctions()
+        public override void Add(DirectoryElement element)
         {
-            if (_fileInfo.Extension == ".ts")
+            if (element.Type == ElementType.FileClass)
             {
-                var ast = new TypeScriptAST(File.ReadAllText(Path), Name);
-                var classes = ast.OfKind(SyntaxKind.ClassDeclaration);
-                foreach (var classDeclaration in classes)
-                {
-                    var FileClass = new DirectoryFileClass(classDeclaration.IdentifierStr, Path);
-                    _children.Add(FileClass);
-                }
+                _children.Add(element);
+            }
+            else
+            {
+                throw new InvalidOperationException("can't add");
             }
         }
-
+        public override bool Remove(DirectoryElement element)
+        {
+            return _children.Remove(element);
+        }
         public override ElementType Type => ElementType.File;
 
         protected override double GetSize()
