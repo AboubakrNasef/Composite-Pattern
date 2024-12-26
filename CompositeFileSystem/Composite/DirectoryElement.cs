@@ -20,6 +20,7 @@ namespace CompositeFileSystem.Composite
         #endregion
 
         #region CompositeRelated
+
         protected IList<DirectoryElement> _children;
         public IReadOnlyList<DirectoryElement> Children => _children.AsReadOnly();
 
