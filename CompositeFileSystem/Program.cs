@@ -13,6 +13,9 @@ try
     var directoryStructure = CreateDirectoryStructure(folderPath);
     var printer = new DirectoryPrinter();
     directoryStructure.Accept(printer);
+
+    Console.WriteLine();
+
 }
 catch (Exception ex)
 {
@@ -51,6 +54,10 @@ DirectoryFolder CreateDirectoryStructure(string path)
             rootFolder.Add(CreateDirectoryStructure(dir));
         }
     }
+
+
+
+
     catch (UnauthorizedAccessException ex)
     {
         Console.WriteLine($"Access denied to some files or directories: {ex.Message}");

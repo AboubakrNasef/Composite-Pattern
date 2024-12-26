@@ -3,6 +3,7 @@
     public enum ElementType
     {
         File,
-        Folder
+        Folder,
+        Class
     }
 }
