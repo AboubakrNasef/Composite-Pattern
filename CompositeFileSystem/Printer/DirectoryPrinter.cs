@@ -12,9 +12,9 @@ class DirectoryPrinter
     {
         Console.BackgroundColor = ConsoleColor.Black;
 
-        Console.ForegroundColor =  ConsoleColor.DarkCyan;
+        Console.ForegroundColor = ConsoleColor.DarkCyan;
         var verticalBar = left == 1 ? "" : "|";
-        var printerString = verticalBar + new string('_', left-1) + directoryElement.ToString();
+        var printerString = verticalBar + new string('_', left - 1) + directoryElement.ToString();
         Console.SetCursorPosition(left, top);
         Console.Write(printerString);
         left++;
@@ -24,10 +24,10 @@ class DirectoryPrinter
     public void Visit(DirectoryFile directoryElement)
     {
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
-        var printerString = "|" + new string('_', left-1) + directoryElement.ToString();
+        var printerString = "|" + new string('_', left - 1) + directoryElement.ToString();
         Console.SetCursorPosition(left, top);
         Console.Write(printerString);
-      //  left++;
+        //  left++;
     }
     public void Leave(DirectoryFolder directoryElement)
     {
