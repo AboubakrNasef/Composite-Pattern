@@ -10,11 +10,8 @@ namespace CompositeFileSystem.Composite
 {
     public class DirectoryFile : DirectoryElement
     {
-        private readonly FileInfo _fileInfo;
-
-        public DirectoryFile(string name, string path) : base(name, path)
+        public DirectoryFile(string name) : base(name)
         {
-            _fileInfo = new FileInfo(path);
         }
 
         public override void Add(DirectoryElement element)
@@ -33,10 +30,5 @@ namespace CompositeFileSystem.Composite
             return _children.Remove(element);
         }
         public override ElementType Type => ElementType.File;
-
-        protected override double GetSize()
-        {
-            return _fileInfo.Length;
-        }
     }
 }
