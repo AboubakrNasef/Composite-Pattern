@@ -1,10 +1,10 @@
 ﻿
 using CompositeFileSystem.Composite;
 
-var folderPath = @"C:\_Aboubakr\TechTalk\DesignPatterns\D1\angular\factory\src\";
+var folderPath = @"C:\_Aboubakr\TechTalk\DesignPatterns\D1\angular\factory\src";
 
 var ParentFolder = CreateDirectoryStructure(folderPath);
-Console.WriteLine("--");
+Console.WriteLine("  ");
 
 #region Print
 var printer = new DirectoryPrinter();
