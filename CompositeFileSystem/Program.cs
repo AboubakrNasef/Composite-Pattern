@@ -21,10 +21,11 @@ DirectoryFolder CreateDirectoryStructure(string path)
     string directoryName = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar));
     var rootFolder = new DirectoryFolder(directoryName);
     var files = Directory.GetFiles(path);
+
     foreach (var file in files)
     {
         string fileName = Path.GetFileName(file);
-        var directoryFile = new DirectoryFile(fileName, file);
+        var directoryFile = new DirectoryFile(fileName);
         rootFolder.Add(directoryFile);
 
         if (Path.GetExtension(fileName) == ".ts")
@@ -33,7 +34,7 @@ DirectoryFolder CreateDirectoryStructure(string path)
             var classes = ast.OfKind(SyntaxKind.ClassDeclaration);
             foreach (var cl in classes)
             {
-                var fileClass = new DirectoryFileClass(cl.IdentifierStr, file);
+                var fileClass = new DirectoryFileClass(cl.IdentifierStr);
                 directoryFile.Add(fileClass);
             }
         }
