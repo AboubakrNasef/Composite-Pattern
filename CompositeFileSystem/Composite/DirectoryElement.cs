@@ -9,8 +9,6 @@ namespace CompositeFileSystem.Composite
 {
     public abstract class DirectoryElement
     {
-        protected string Path { get; set; }
-
         protected DirectoryElement(string name)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
