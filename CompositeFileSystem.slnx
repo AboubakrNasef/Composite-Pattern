@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="CompositeFileSystem/CompositeFileSystem.csproj" />
+  <Project Path="FileSystem/FileSystem.csproj" />
+  <Project Path="FileSystemWithClasses/FileSystemWithClasses.csproj" />
 </Solution>
