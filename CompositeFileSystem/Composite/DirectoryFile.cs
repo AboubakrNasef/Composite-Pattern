@@ -11,7 +11,7 @@ namespace CompositeFileSystem.Composite
         public DirectoryFile(string name) : base(name)
         {
         }
-
+         
         public override ElementType Type => ElementType.File;
     }
 }

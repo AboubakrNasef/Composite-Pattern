@@ -2,11 +2,10 @@
 using CompositeFileSystem.Composite;
 using Dumpify;
 
-class DirectoryPrinter
+class DirectoryPrinter (int left , int top)
 {
-
-    int left = 1;
-    int top = 0;
+    int left = left+1;
+    int top = top;
 
     public void Visit(DirectoryFolder directoryElement)
     {
