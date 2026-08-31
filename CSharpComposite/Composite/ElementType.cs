@@ -7,6 +7,6 @@
 		CSHP_File,
 		CSHP_Property,
 		CSHP_Method,
-
+		CSHP_Parameter,
 	}
 }

@@ -1,4 +1,7 @@
 using CSharpComposite.Composite;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 HashSet<string> ignores = new HashSet<string> { ".git", ".vs", "bin", "obj", "node_modules" };
 Console.WriteLine("C# Code Analysis - Composite Design Pattern");
 Console.WriteLine("Enter folder path:");
@@ -66,38 +69,65 @@ void ProcessDirectory(DirectoryFolder parentFolder, DirectoryInfo directoryInfo)
 			{
 				var codeFile = new CSHP_File(file.Name);
 				var fileContent = File.ReadAllText(file.FullName);
+				var tree = CSharpSyntaxTree.ParseText(fileContent);
+				var root = tree.GetRoot();
 
-				// Extract methods
-				var methodPattern = @"(?:public|private|protected|internal)\s+(?:static\s+)?(?:async\s+)?(\w+[\w<>,\s]*?)\s+(\w+)\s*\(([^)]*)\)";
-				var methodMatches = System.Text.RegularExpressions.Regex.Matches(fileContent, methodPattern);
-
-				foreach (System.Text.RegularExpressions.Match match in methodMatches)
+				// Extract methods using AST
+				var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+				foreach (var method in methods)
 				{
-					var returnType = match.Groups[1].Value.Trim();
-					var methodName = match.Groups[2].Value.Trim();
-
-					if (methodName != directoryInfo.Name) // Skip constructors
+					try
 					{
-						var method = new CSHP_Method(methodName, returnType);
-						codeFile.Add(method);
+						var methodName = method.Identifier.Text;
+						var returnType = method.ReturnType.ToString();
+
+						if (methodName != directoryInfo.Name) // Skip constructors
+						{
+							var cshpMethod = new CSHP_Method(methodName, returnType);
+
+							// Extract parameters
+							foreach (var param in method.ParameterList.Parameters)
+							{
+								try
+								{
+									var paramName = param.Identifier.Text;
+									var paramType = param.Type?.ToString() ?? "var";
+									var parameter = new CSHP_Parameter(paramName, paramType);
+									cshpMethod.Add(parameter);
+								}
+								catch
+								{
+									// Skip problematic parameters
+								}
+							}
+
+							codeFile.Add(cshpMethod);
+						}
+					}
+					catch
+					{
+						// Skip problematic methods
 					}
 				}
 
-				// Extract properties
-				var propertyPattern = @"(?:public|private)\s+(\w+[\w<>,\s]*)\s+(\w+)\s*\{\s*([^}]*)\}";
-				var propertyMatches = System.Text.RegularExpressions.Regex.Matches(fileContent, propertyPattern);
-
-				foreach (System.Text.RegularExpressions.Match match in propertyMatches)
+				// Extract properties using AST
+				var properties = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
+				foreach (var prop in properties)
 				{
-					var propertyType = match.Groups[1].Value.Trim();
-					var propertyName = match.Groups[2].Value.Trim();
-					var accessors = match.Groups[3].Value.ToLower();
+					try
+					{
+						var propertyName = prop.Identifier.Text;
+						var propertyType = prop.Type.ToString();
+						var hasGetter = prop.AccessorList?.Accessors.Any(a => a.Kind() == SyntaxKind.GetAccessorDeclaration) ?? false;
+						var hasSetter = prop.AccessorList?.Accessors.Any(a => a.Kind() == SyntaxKind.SetAccessorDeclaration) ?? false;
 
-					var hasGetter = accessors.Contains("get");
-					var hasSetter = accessors.Contains("set");
-
-					var property = new CSHP_Property(propertyName, propertyType, hasGetter, hasSetter);
-					codeFile.Add(property);
+						var cshpProperty = new CSHP_Property(propertyName, propertyType, hasGetter, hasSetter);
+						codeFile.Add(cshpProperty);
+					}
+					catch
+					{
+						// Skip problematic properties
+					}
 				}
 
 				parentFolder.Add(codeFile);
@@ -142,11 +172,19 @@ void PrintElement(DirectoryElement element, DirectoryPrinter printer)
 			break;
 		case CSHP_Method method:
 			printer.Visit(method);
+			foreach (var child in method.Children)
+			{
+				PrintElement(child, printer);
+			}
 			printer.Leave(method);
 			break;
 		case CSHP_Property property:
 			printer.Visit(property);
 			printer.Leave(property);
+			break;
+		case CSHP_Parameter parameter:
+			printer.Visit(parameter);
+			printer.Leave(parameter);
 			break;
 	}
 }

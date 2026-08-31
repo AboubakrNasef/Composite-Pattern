@@ -65,6 +65,7 @@ class DirectoryPrinter(int left, int top)
 		Console.ForegroundColor = ConsoleColor.Blue;
 		var printerString = "|" + new string('_', left - 1) + cshpElement.ToString() + "()";
 		WriteAtPosition(left, top, printerString);
+		left++;
 		top++;
 	}
 
@@ -84,6 +85,7 @@ class DirectoryPrinter(int left, int top)
 
 	public void Leave(CSHP_Method cshpElement)
 	{
+		left--;
 		Console.ForegroundColor = ConsoleColor.White;
 	}
 
@@ -91,6 +93,20 @@ class DirectoryPrinter(int left, int top)
 	{
 		Console.ForegroundColor = ConsoleColor.White;
 	}
+
+	public void Visit(CSHP_Parameter cshpElement)
+	{
+		Console.ForegroundColor = ConsoleColor.Cyan;
+		var printerString = "|" + new string('_', left - 1) + cshpElement.ToString() + ": " + cshpElement.ParameterType;
+		WriteAtPosition(left, top, printerString);
+		top++;
+	}
+
+	public void Leave(CSHP_Parameter cshpElement)
+	{
+		Console.ForegroundColor = ConsoleColor.White;
+	}
+
 	public void Leave(DirectoryFolder directoryElement)
 	{
 		left--;
