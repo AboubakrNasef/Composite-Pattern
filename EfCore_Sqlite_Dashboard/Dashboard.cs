@@ -12,6 +12,7 @@ public static class Dashboard
             WriteLine(ConsoleColor.Cyan, "2. Search products containing 'Code'");
             WriteLine(ConsoleColor.Cyan, "3. Product count by category");
             WriteLine(ConsoleColor.Cyan, "4. Inventory value by category");
+            WriteLine(ConsoleColor.Cyan, "5. Show EF Core execution pipeline");
             WriteLine(ConsoleColor.Cyan, "0. Exit");
             Write(ConsoleColor.Yellow, "Selection: ");
 
@@ -45,11 +46,14 @@ public static class Dashboard
                         CatalogQueries.CategoryInventoryTotals(db),
                         result => $"{result.CategoryName} | inventory value: {result.InventoryValue:C}");
                     break;
+                case "5":
+                    ExpressionTreeRenderer.Render(CatalogQueries.ProductsWithCategories(db));
+                    break;
                 case "0":
                     Console.ResetColor();
                     return;
                 default:
-                    WriteLine(ConsoleColor.Red, "Invalid selection. Choose 0, 1, 2, 3, or 4.");
+                    WriteLine(ConsoleColor.Red, "Invalid selection. Choose 0, 1, 2, 3, 4, or 5.");
                     break;
             }
         }
@@ -92,3 +96,5 @@ public static class Dashboard
         Console.ResetColor();
     }
 }
+
+
