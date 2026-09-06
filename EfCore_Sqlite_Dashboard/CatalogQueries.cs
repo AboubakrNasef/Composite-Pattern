@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 public sealed record ProductWithCategory(
 	string ProductName,
@@ -63,6 +63,17 @@ public static class CatalogQueries
 			.Select(category => new CategoryInventoryTotal(
 				category.Name,
 				category.Products.Sum(product => product.Price * product.StockQuantity)));
+    public static IQueryable<Product> ProductsWithUntranslatableMethod(CatalogDbContext db) =>
+        db.Products
+            .AsNoTracking()
+            .Where(product => IsExpensive(product.Price));
+
+    public static IQueryable<Product> ProductsWithTranslatedFilter(CatalogDbContext db) =>
+        db.Products
+            .AsNoTracking()
+            .Where(product => product.Price > 100);
+
+    public static bool IsExpensive(decimal price) => price > 100;
 }
 
 

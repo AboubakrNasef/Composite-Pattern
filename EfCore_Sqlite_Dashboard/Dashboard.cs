@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 public static class Dashboard
 {
@@ -13,6 +14,8 @@ public static class Dashboard
             WriteLine(ConsoleColor.Cyan, "3. Product count by category");
             WriteLine(ConsoleColor.Cyan, "4. Inventory value by category");
             WriteLine(ConsoleColor.Cyan, "5. Show EF Core execution pipeline");
+            WriteLine(ConsoleColor.Cyan, "6. Show method cannot be translated error");
+            WriteLine(ConsoleColor.Cyan, "7. Resolve it with a translatable expression");
             WriteLine(ConsoleColor.Cyan, "0. Exit");
             Write(ConsoleColor.Yellow, "Selection: ");
 
@@ -48,6 +51,13 @@ public static class Dashboard
                     break;
                 case "5":
                     ExpressionTreeRenderer.Render(CatalogQueries.ProductsWithCategoriesWithFilter(db));
+                    break;
+                case "6":
+                    RenderTranslationFailure(db);
+                    break;
+                case "7":
+                    RenderTranslatedMethod(db);
+
                     break;
                 case "0":
                     Console.ResetColor();
@@ -94,6 +104,41 @@ public static class Dashboard
         Console.ForegroundColor = color;
         Console.WriteLine(value);
         Console.ResetColor();
+    }
+    private static void RenderTranslatedMethod(CatalogDbContext db)
+    {
+        var options = new DbContextOptionsBuilder<CatalogDbContext>()
+            .UseSqlite(db.Database.GetDbConnection().ConnectionString)
+            .ReplaceService<Microsoft.EntityFrameworkCore.Query.IMethodCallTranslatorProvider, CatalogMethodCallTranslatorProvider>()
+            .Options;
+
+        using var translatedDb = new CatalogDbContext(options);
+
+        Render(
+            "7. Resolved with a custom method translator",
+            "db.Products.Where(product => IsExpensive(product.Price))",
+            CatalogQueries.ProductsWithUntranslatableMethod(translatedDb),
+            product => $"{product.Name} | {product.Price:C}");
+    }
+    private static void RenderTranslationFailure(CatalogDbContext db)
+    {
+        WriteLine(ConsoleColor.Yellow, "6. Method cannot be translated");
+        WriteLine(ConsoleColor.Yellow, "LINQ query:");
+        WriteLine(ConsoleColor.Yellow, "db.Products.Where(product => IsExpensive(product.Price))");
+
+        try
+        {
+            var query = CatalogQueries.ProductsWithUntranslatableMethod(db);
+            WriteLine(ConsoleColor.DarkGray, "SQL:");
+            WriteLine(ConsoleColor.DarkGray, query.ToQueryString());
+            _ = query.ToList();
+        }
+        catch (InvalidOperationException exception)
+        {
+            WriteLine(ConsoleColor.Red, "Expected translation error:");
+            WriteLine(ConsoleColor.Red, exception.Message);
+            WriteLine(ConsoleColor.Red, "The custom C# method has no SQL translation.");
+        }
     }
 }
 
