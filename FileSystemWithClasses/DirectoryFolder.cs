@@ -1,20 +1,20 @@
 namespace FileSystemWithClasses;
 
-public class DirectoryFolder
+public class DirectoryFolder : IDirectoryElement
 {
-    public DirectoryFolder(string name)
-    {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-    }
+	public DirectoryFolder(string name)
+	{
+		Name = name ?? throw new ArgumentNullException(nameof(name));
+	}
 
-    public string Name { get; }
+	public string Name { get; }
 
-    public List<DirectoryFile> Files { get; } = [];
+	public List<DirectoryFile> Files { get; } = [];
 
-    public List<DirectoryFolder> Folders { get; } = [];
-
-    public void Print()
-    {
+	public List<DirectoryFolder> Folders { get; } = [];
+	//Single Responsibility 
+	public void Print()
+	{
 
 		Console.ForegroundColor = ConsoleColor.DarkCyan;
 		Console.WriteLine($"{Name}/");
@@ -27,7 +27,7 @@ public class DirectoryFolder
 
 		foreach (var childFolder in Folders)
 		{
-			childFolder.Print() ;
+			childFolder.Print();
 		}
 	}
 }

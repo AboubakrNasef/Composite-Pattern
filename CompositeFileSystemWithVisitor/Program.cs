@@ -1,36 +1,31 @@
 ﻿
 using CompositeFileSystem.Composite;
-
-
-
-var folder = new SpecialFolder("RootFolder");
-if (folder.GetType() == typeof(DirectoryFolder))
-{
-	Console.WriteLine();
-}
-else if (folder.GetType() == typeof(SpecialFolder))
-{
-	Console.WriteLine("This is a special folder.");
-}
-;
-
-
+using CompositeFileSystemWithVisitor.NormalApproach;
+using CompositeFileSystemWithVisitor.VisitorApproach;
 
 HashSet<string> ignores = new HashSet<string> { ".git", ".vs", "bin", "obj", "node_modules" };
 Console.WriteLine("Composite Design Pattern - File System Example");
 Console.WriteLine("EnterFolderPath:");
 try
 {
-
-
 	var folderPath = Console.ReadLine();
 
 	var ParentFolder = CreateDirectoryStructure(folderPath);
 	Console.WriteLine("  ");
 
 	#region Print
-	var printer = new DirectoryPrinter(Console.CursorLeft, Console.CursorTop);
-	ParentFolder.Accept(printer);
+	NormalPrinter.Print(ParentFolder);
+	var pathCollector = new CollectPathVisitor();
+	ParentFolder.Accept(pathCollector);
+	var pathPritner = new PrinterWithPathVisitor(pathCollector.Paths);
+	ParentFolder.Accept(pathPritner);
+	Console.WriteLine(pathPritner.GetResult());
+	var printerVisitor = new PrinterVisitor();
+	ParentFolder.Accept(printerVisitor);
+	Console.WriteLine("  ");
+	Console.WriteLine(printerVisitor.GetResult());
+	//var printer = new DirectoryPrinter(Console.CursorLeft, Console.CursorTop);
+	//ParentFolder.Accept(printer);
 	Console.WriteLine();
 	#endregion
 }
