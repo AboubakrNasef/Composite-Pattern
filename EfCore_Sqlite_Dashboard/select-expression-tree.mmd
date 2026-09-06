@@ -1,0 +1,73 @@
+flowchart TD
+    Root["SelectExpression"] --> Select["Relational SELECT"]
+
+    Select --> Core["Query shape"]
+    Core --> Alias["Alias: null"]
+    Core --> Distinct["IsDistinct: False"]
+    Core --> Limit["Limit: null"]
+    Core --> Offset["Offset: null"]
+    Core --> GroupBy["GroupBy: empty"]
+    Core --> Having["Having: null"]
+    Core --> Tags["Tags: empty"]
+
+    Select --> Orderings["Orderings"]
+    Orderings --> O0["Item 0: c.Name"]
+    O0 --> O0Expr["Expression: c.Name"]
+    O0Expr --> O0Column["Column: Categories.Name | TEXT | NonNullable"]
+    O0 --> O0Asc["IsAscending: True"]
+    Orderings --> O1["Item 1: p.StockQuantity"]
+    O1 --> O1Expr["Expression: p.StockQuantity"]
+    O1Expr --> O1Column["Column: Products.StockQuantity | INTEGER | NonNullable"]
+    O1 --> O1Asc["IsAscending: True"]
+    Orderings --> O2["Item 2: COLLATE(p.Price, EF_DECIMAL)"]
+    O2 --> O2Expr["CollateExpression"]
+    O2Expr --> Collation["Collation: EF_DECIMAL"]
+    O2Expr --> Operand["Operand: p.Price"]
+    Operand --> PriceColumn["Column: Products.Price | TEXT | NonNullable"]
+    O2 --> O2Asc["IsAscending: True"]
+
+    Select --> Predicate["Predicate"]
+    Predicate --> And["AndAlso"]
+    And --> GreaterStock["GreaterThan"]
+    GreaterStock --> Stock["p.StockQuantity"]
+    GreaterStock --> Zero1["Constant: 0"]
+    And --> GreaterPrice["GreaterThan"]
+    GreaterPrice --> Compare["ef_compare(p.Price, 20)"]
+    Compare --> PriceArg["Argument: p.Price"]
+    Compare --> Twenty["Constant: 20"]
+    GreaterPrice --> Zero2["Constant: 0"]
+
+    Select --> Projection["Projection"]
+    Projection --> P0["Item 0: Alias Name"]
+    P0 --> P0Expr["Expression: p.Name"]
+    P0Expr --> P0Column["Column: Products.Name | TEXT | NonNullable"]
+    Projection --> P1["Item 1: Alias Name"]
+    P1 --> P1Expr["Expression: c.Name"]
+    P1Expr --> P1Column["Column: Categories.Name | TEXT | NonNullable"]
+    Projection --> P2["Item 2: Alias Price"]
+    P2 --> P2Expr["Expression: p.Price"]
+    P2Expr --> P2Column["Column: Products.Price | TEXT | NonNullable"]
+    Projection --> P3["Item 3: Alias StockQuantity"]
+    P3 --> P3Expr["Expression: p.StockQuantity"]
+    P3Expr --> P3Column["Column: Products.StockQuantity | INTEGER | NonNullable"]
+
+    Select --> Tables["Tables"]
+    Tables --> Products["TableExpression: Products"]
+    Products --> ProductsAlias["Alias: p"]
+    Products --> ProductsKey["Primary key: PK_Products {Id}"]
+    Tables --> Join["InnerJoinExpression"]
+    Join --> JoinPredicate["JoinPredicate: Equal"]
+    JoinPredicate --> JoinLeft["Left: p.CategoryId"]
+    JoinPredicate --> JoinRight["Right: c.Id"]
+    Join --> Categories["TableExpression: Categories"]
+    Categories --> CategoriesAlias["Alias: c"]
+    Categories --> CategoriesKey["Primary key: PK_Categories {Id}"]
+
+    classDef root fill:#4c1d95,color:#fff,stroke:#a78bfa,stroke-width:3px;
+    classDef branch fill:#164e63,color:#fff,stroke:#22d3ee;
+    classDef expression fill:#365314,color:#fff,stroke:#a3e635;
+    classDef value fill:#422006,color:#fff,stroke:#fbbf24;
+    class Root root;
+    class Select,Core,Orderings,Predicate,Projection,Tables branch;
+    class O0Expr,O1Expr,O2Expr,And,GreaterStock,GreaterPrice,Compare,P0Expr,P1Expr,P2Expr,P3Expr,JoinPredicate expression;
+    class Alias,Distinct,Limit,Offset,GroupBy,Having,Tags,O0Column,O1Column,Collation,Operand,PriceColumn,Stock,Zero1,PriceArg,Twenty,Zero2,P0Column,P1Column,P2Column,P3Column,ProductsAlias,ProductsKey,CategoriesAlias,CategoriesKey,JoinLeft,JoinRight value;
