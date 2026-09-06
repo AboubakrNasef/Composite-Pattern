@@ -1,6 +1,10 @@
-<Solution>
+﻿<Solution>
   <Project Path="CompositeFileSystem/CompositeFileSystem.csproj" />
+  <Project Path="CompositeFileSystemWithVisitor/CompositeFileSystemWithVisitor.csproj" Id="01adaebe-3c06-4aec-8ceb-7eee85aa03b4" />
   <Project Path="CSharpComposite/CSharpComposite.csproj" />
   <Project Path="FileSystem/FileSystem.csproj" />
   <Project Path="FileSystemWithClasses/FileSystemWithClasses.csproj" />
+  <Project Path="OpenXml_Visitor/OpenXml_Visitor.csproj" Id="cbc701fe-10ee-4ba1-ae60-377349510ca5" />
+  <Project Path="EfCore_Sqlite_Dashboard/EfCore_Sqlite_Dashboard.csproj" />
 </Solution>
+
