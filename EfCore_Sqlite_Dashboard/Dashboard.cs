@@ -47,7 +47,7 @@ public static class Dashboard
                         result => $"{result.CategoryName} | inventory value: {result.InventoryValue:C}");
                     break;
                 case "5":
-                    ExpressionTreeRenderer.Render(CatalogQueries.ProductsWithCategories(db));
+                    ExpressionTreeRenderer.Render(CatalogQueries.ProductsWithCategoriesWithFilter(db));
                     break;
                 case "0":
                     Console.ResetColor();
