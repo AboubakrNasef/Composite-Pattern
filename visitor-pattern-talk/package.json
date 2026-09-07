@@ -1,0 +1,17 @@
+{
+  "name": "visitor-pattern-talk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev slides.md --port 3031",
+    "build": "slidev build slides.md",
+    "export": "slidev export slides.md --output visitor-draft.pdf"
+  },
+  "devDependencies": {
+    "@slidev/cli": "^52.19.1",
+    "@slidev/theme-default": "^0.25.0",
+    "@fontsource/poppins": "^5.2.0",
+    "@fontsource/pt-sans": "^5.2.0",
+    "playwright-chromium": "^1.55.0"
+  }
+}
